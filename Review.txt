@@ -1,0 +1,61 @@
+jumat,10 februari 2017
+
+PDO (PHP Data Object)
+PDO (PHP Data Object) adalah interface universal yang di sediakan oleh PHP. 
+Interface Universal adalah kondisi diman PDO tidak terikat dengan aplikasi database tertentu,jadi jika ingin melakukan perubahan aplikasi database, hanya perlu ganti cara pemanggilan awal PDO
+dan seluruh kode program yang ada. jadi intinya PDO tidak terhubung langsung dengan databse, tetapi hanya sebagai "interface". Berikut gambaran skemanya :
+PHP PDO => Database Driver => Database Server .
+jika menggunakan PDO, telah disediakan "Abstraction Layer" untuk berkomunikasi, artinya apaun jenis database server yang digunakan,kode PHP yang digunakan tetap sama, 
+karena PDO mendukung banyak aplikasi database yang banyak digunakan sehingga sangat fleksibel penggunaannya.
+Untuk membuat koneksi antara PHP dengan MySQL  menggunakan "PDO Constructor", yakni dengan membuat object baru dari class PDO menggunakan keyword "new" sebagai berikut :
+$dbmhs  = new PDO('mysql:host=lokasi_db;dbname=nama_database',"nama","password");
+Variabel $dbmhs adalah variabel yang akan menjadi object PDO,object ini disebut sebagai "database handler".
+NB: Nama variabel tidak harus $dbmhs.
+jika koneksi PDO telh sukses,untuk menghapus koneksi tersebut cukup memberikan nilai "null" pada variabel "database handler" sebagai berikut :
+<?php
+$dbmhs = null;
+?>
+penutupan koneksi ini bersifat opsional karena PHP secara otomatis akan menghapus  koneksi pada saat halaman PHP slesai dijalankan.
+
+Berikut perbandingan cara melakukan koneksi database server PDO terhadap beberapa database :
+# MS SQL Server Database
+$dbmhs = new PDO("mssql:host=lokasi_db;dbname=nama_database',"nama","password");
+# Sybase Database
+$dbmhs = new PDO("sybase:host=lokasi_db;dbname=nama_database',"nama","password");
+# SQLite Database
+$dbmhs = new PDO("sqlite:my/database/path/database.db");
+
+Review CRUD biasa dengan CRUD OOP.
+penggunaan CRUD biasa pada pembuatan web sedikit lebih rumit dibandingkan dengan CRUD menggunakan PDO.
+CRUD biasa kita melakukan inputan data dari form index kemudian lakukan penambahan di form create dan hasilnya akan ditampilkan pada form index.
+proses CRUD biasa lebih banyak memakan memori karena masing-masing tindakan memiliki file masing-masing, sedangkan CRUD menggunakan PDO kita hanya perlu melakukan penambahan data pada syntax index.php.
+dimana data yang kita set disana langsung masuk ke database tanpa harus melalui tampilan form terlebih dahulu atau membuka index.
+Berikut contoh syntaxnya :
+<?php
+
+require_once "database/Connection.php";	//printah ini guna menampilkan error dan script selanjutnya dihentikan jika error pada file
+require_once "database/QueryBuilder.php";
+require_once "config/database.php";
+
+$connection = Connection::make($config);
+
+$db = new QueryBuilder($connection);		//pemanggilan connection.php sebagai penghubung ke database
+
+// $mahasiswa = $db->select('mahasiswa');
+// foreach ($mahasiswa as $mhs) {
+//     echo $mhs->nim.'</br>';
+//     echo $mhs->nama.'</br>';
+//     echo $mhs->kelas.'</br>';
+//     echo $mhs->prodi.'</br>';
+//     echo $mhs->jurusan.'</br>';
+//     echo "</br>";
+// }
+
+
+$db->insert('mahasiswa', [
+        'nim' => '140111',
+        'nama' => 'Aditya',
+        'kelas' => '3A',
+        'prodi' => 'MI',
+        'jurusan' => 'TI'
+    ]);
